@@ -18,3 +18,5 @@ Data fields such as Date, Location (State, Address, Latitude, Longitude), Casual
 - matplotlib
 - plotly
 - calendar
+
+## Visualization Result
