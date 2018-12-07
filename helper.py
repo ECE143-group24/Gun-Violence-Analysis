@@ -286,3 +286,122 @@ def rise_of_laws(data, year = [2014, 2015, 2016, 2017], title = "Rise of Gun Vio
     layout = go.Layout(barmode = 'stack', title = title + ': %s - %s' % (year[0], year[-1]))
     fig = go.Figure(data = trace, layout = layout)
     return iplot(fig)
+
+################
+# state wise incidents plot
+def state_wise_plot(statesdf,tl = 'Number of gun voilence incidents per state', colorscale = [[0.0, 'rgb(242,240,247)'],[0.2, 'rgb(218,218,235)'],[0.4, 'rgb(188,189,220)'],\
+            [0.6, 'rgb(158,154,200)'],[0.8, 'rgb(117,107,177)'],[1.0, 'rgb(84,39,143)']]):
+    '''
+    Plot the state wise plot using iplot.
+    inp:
+        statesdf: Dataframe
+        tl: str
+        colorscale: str
+        
+    '''
+    data = [ dict(
+        type = 'choropleth',
+        colorscale = colorscale,
+        autocolorscale = False,
+        showscale = True,
+        locations = statesdf['state_code'],
+        z = statesdf['counts'],
+        locationmode = 'USA-states',
+        marker = dict(
+            line = dict (
+                color = 'rgb(255, 255, 255)',
+                width = 2
+            ) ),
+        ) ]
+ 
+    layout = dict(
+            title = tl,
+            geo = dict(
+                scope = 'usa',
+                projection = dict( type='albers usa' ),
+                showlakes = True,
+                lakecolor = 'rgb(255, 255, 255)',
+                countrycolor = 'rgb(255, 255, 255)')
+                 )
+
+    figure = dict(data=data, layout=layout)
+    iplot(figure)
+
+#############
+# state wise incidents rate bar plot
+def Barplot(x_data,y_data,title):
+    '''
+    Plot state/citywise wise bar plot
+    inp:
+        x_data: Dataframe
+        y_data: Dataframe
+        title: str
+    '''
+    trace1 = go.Bar(
+        x=x_data,
+        y=y_data,
+        name='Location Types',
+        orientation = 'v',
+        marker=dict(color='purple'),
+        opacity=0.7
+    )
+
+    data = [trace1]
+    layout = go.Layout(
+        height=400,
+        margin=dict(b=150),
+        barmode='group',
+        legend=dict(dict(x=-.1, y=1.2)),
+        title = title,
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+    iplot(fig, filename='grouped-bar')
+
+def city_data_prepare(df):
+    '''
+    prepare data for city population plot
+    inp:
+        df: Dataframe
+    return:
+        ip: Dataframe
+    '''
+    tempdf = df.groupby(by=['city_or_county']).agg({'n_killed': 'sum', 'n_injured' : 'sum', 'city_population' : 'mean', 'state' : 'count'}).reset_index().rename(columns={'state' : 'total_incidents', 'n_killed' : 'total_killed', 'n_injured' : 'total_injured'})
+    tempdf['incidents_population_ratio'] = 1000*tempdf['total_incidents'] / (tempdf['city_population']+1) 
+    tempdf['killed_population_ratio'] = 1000*tempdf['total_killed'] / (tempdf['city_population']+1) 
+    tempdf['injured_population_ratio'] = 1000*tempdf['total_injured'] / (tempdf['city_population']+1) 
+    tempdf['loss_population_ratio'] = 1000*(tempdf['total_killed'] + tempdf['total_injured']) / (tempdf['city_population']+1) 
+    i_p = tempdf.sort_values(['incidents_population_ratio'], ascending=[False])
+    i_p = i_p[i_p['city_population'] > 500000][:25]
+    return i_p
+
+def scatter_plot(x_data, y_data,text, title, x_title, y_title):
+    '''
+    Scatter plot for analysis.
+    inp:
+        x_data: Dataframe
+        y_data: Dataframe
+        title,x_title,y_title:str
+    '''
+    data = [
+    {
+        'x': x_data,
+        'y': y_data,
+        'mode': 'markers+text',
+        'text' : text,
+        'textposition' : 'bottom center',
+        'marker': {
+            'color': "#42f4bc",
+            'size': 15,
+            'opacity': 0.9
+        }
+    }
+    ]
+
+    layout = go.Layout(title=title, 
+                   xaxis=dict(title=x_title),
+                   yaxis=dict(title=y_title)
+                  )
+    fig = go.Figure(data = data, layout = layout)
+    iplot(fig, filename='scatter-colorscale')
+    
