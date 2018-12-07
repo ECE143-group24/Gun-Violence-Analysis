@@ -17,4 +17,4 @@ Data fields such as Date, Location (State, Address, Latitude, Longitude), Casual
 - pandas
 - matplotlib
 - plotly
-- alendar
+- calendar
