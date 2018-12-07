@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Dec  7 00:51:34 2018
-
-@author: peiyu
-"""
-
 # Helper functions to be used in data processing and visualization
 
 import pandas as pd
@@ -14,6 +6,7 @@ from plotly.offline import iplot, plot
 import plotly.graph_objs as go
 from collections import defaultdict
 import calendar
+
 
 def load_data(path):
     '''
@@ -293,5 +286,3 @@ def rise_of_laws(data, year = [2014, 2015, 2016, 2017], title = "Rise of Gun Vio
     layout = go.Layout(barmode = 'stack', title = title + ': %s - %s' % (year[0], year[-1]))
     fig = go.Figure(data = trace, layout = layout)
     return iplot(fig)
-
-
