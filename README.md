@@ -19,4 +19,3 @@ Data fields such as Date, Location (State, Address, Latitude, Longitude), Casual
 - plotly
 - calendar
 
-## Visualization Result
